@@ -17,6 +17,8 @@ import vgg_model
 server_init = imagezmq.ImageHub(open_port='tcp://*:8008')
 hostname = socket.gethostname()
 ipaddress = socket.gethostbyname(hostname)
+"""Below code will show the ipaddress of the server it is using
+Use this ip address in the client code to connect to this server"""
 print("Ip address of server: "+str(ipaddress))
 
 blank = vgg_model.VggFaceNet()
