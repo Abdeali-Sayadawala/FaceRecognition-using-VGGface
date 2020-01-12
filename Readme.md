@@ -1,0 +1,1 @@
+Link for VGGFace weights : https://drive.google.com/file/d/1CPSeum3HpopfomUEK1gybeuIVoeJT_Eo/view?usp=sharing
