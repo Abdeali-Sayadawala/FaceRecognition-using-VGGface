@@ -12,15 +12,17 @@ import numpy as np
 import socket
 """vgg_model is out moduel to detect faces and recognize them"""
 import vgg_model
-#import pymongo
+import pymongo
+import datetime
+print(datetime.datetime.now().strftime("%H"),":",datetime.datetime.now().strftime("%M"),":",datetime.datetime.now().strftime("%S"))
 
 """initializing the server using imagezmq"""
 server_init = imagezmq.ImageHub(open_port='tcp://*:8008')
 hostname = socket.gethostname()
 ipaddress = socket.gethostbyname(hostname)
-#client = pymongo.MongoClient("mongodb://localhost:27017")
-#db = client["Ajna"]
-#coll = db["Person"]
+client = pymongo.MongoClient("mongodb+srv://abdeali009:qwerty123@abdeali-mps2e.mongodb.net/test?retryWrites=true&w=majority")
+db = client["Ajna"]
+coll = db["Person"]
 """Below code will show the ipaddress of the server it is using
 Use this ip address in the client code to connect to this server"""
 print("Ip address of server: "+str(ipaddress))
@@ -32,7 +34,16 @@ detect = vgg_model.Detection()
     This loop can be broken by pressing the 'q' button"""
 while True:
     """We recieve image and message from the client connected"""
-    (msg, frame) = server_init.recv_image()    
+    (msg, frame) = server_init.recv_image()
+
+    """Time setting for entry of time stamp in database"""    
+    date = datetime.datetime.now().strftime("%d")
+    month = datetime.datetime.now().strftime("%m")
+    year = datetime.datetime.now().strftime("%Y")
+    hr = datetime.datetime.now().strftime("%H")
+    mi = datetime.datetime.now().strftime("%M")
+    sec = datetime.datetime.now().strftime("%S") 
+    time = str(date)+"/"+str(month)+"/"+str(year)+"--"+str(hr)+":"+str(mi)+":"+str(sec)
     
     faces = detect.detectFace(frame)
     
@@ -41,6 +52,7 @@ while True:
         scores = blank.recognize_from_encodings(faceimg)
         print(scores)
         name = max(scores, key = scores.get)
+        coll.insert_one({"ID":name, "Camera":msg, "Time": time})
         print(name)
         cv2.rectangle(frame, (x, y), (x+w, y+h), (255,0,0), 1)
     
