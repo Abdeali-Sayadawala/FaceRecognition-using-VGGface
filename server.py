@@ -20,7 +20,7 @@ print(datetime.datetime.now().strftime("%H"),":",datetime.datetime.now().strftim
 server_init = imagezmq.ImageHub(open_port='tcp://*:8008')
 hostname = socket.gethostname()
 ipaddress = socket.gethostbyname(hostname)
-client = pymongo.MongoClient("mongodb+srv://abdeali009:qwerty123@abdeali-mps2e.mongodb.net/test?retryWrites=true&w=majority")
+client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["Ajna"]
 coll = db["Person"]
 """Below code will show the ipaddress of the server it is using
@@ -85,23 +85,23 @@ cv2.destroyAllWindows()
 #    scores = blank.recognize_from_encodings(faceimg)
 #    print(scores)
 #cv2.imshow("frame", img)    
-#vc = cv2.VideoCapture(0)
-#while True:
-#    ret, frame = vc.read()
-#    faces = detect.detectFace(frame)
-#    for (x,y,w,h) in faces:
-#        faceimg = frame[y:y+h, x:x+w]
-#        scores = blank.recognize_from_encodings(faceimg)
-##        print(scores)
-#        name = max(scores, key = scores.get)
-#        print(name)
-#        cv2.rectangle(frame, (x, y), (x+w, y+h), (255,0,0), 1)
-#    
-#    cv2.imshow("Frame", frame)
-#    
-#    if cv2.waitKey(1) & 0xFF == ord('q'):
-#        break
-#vc.release()
-#cv2.destroyAllWindows()
+vc = cv2.VideoCapture(0)
+while True:
+    ret, frame = vc.read()
+    faces = detect.detectFace(frame)
+    for (x,y,w,h) in faces:
+        faceimg = frame[y:y+h, x:x+w]
+        scores = blank.recognize_from_encodings(faceimg)
+#        print(scores)
+        name = max(scores, key = scores.get)
+        print(name)
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (255,0,0), 1)
+    
+    cv2.imshow("Frame", frame)
+    
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+vc.release()
+cv2.destroyAllWindows()
     
     
