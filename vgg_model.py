@@ -65,7 +65,7 @@ class Detection():
     
 class VggFaceNet(object):
     epsilon_cosine = 0.40
-    epsilon_euclid = 70
+    epsilon_euclid = 80
     
     """ We make the network in the init function and due to this the network gets preloaded when the object is created"""
     def __init__(self, load_encodings=1):
