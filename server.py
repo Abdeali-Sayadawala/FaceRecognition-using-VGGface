@@ -52,7 +52,8 @@ while True:
         scores = blank.recognize_from_encodings(faceimg)
         print(scores)
         name = max(scores, key = scores.get)
-        coll.insert_one({"ID":name, "Camera":msg, "Time": time})
+        coll = db[name]
+        coll.insert_one({"Camera":msg, "Time": time})
         print(name)
         cv2.rectangle(frame, (x, y), (x+w, y+h), (255,0,0), 1)
     
@@ -85,23 +86,28 @@ cv2.destroyAllWindows()
 #    scores = blank.recognize_from_encodings(faceimg)
 #    print(scores)
 #cv2.imshow("frame", img)    
-vc = cv2.VideoCapture(0)
-while True:
-    ret, frame = vc.read()
-    faces = detect.detectFace(frame)
-    for (x,y,w,h) in faces:
-        faceimg = frame[y:y+h, x:x+w]
-        scores = blank.recognize_from_encodings(faceimg)
-#        print(scores)
-        name = max(scores, key = scores.get)
-        print(name)
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (255,0,0), 1)
-    
-    cv2.imshow("Frame", frame)
-    
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-vc.release()
-cv2.destroyAllWindows()
+
+#############################################
+#vc = cv2.VideoCapture(0)
+#while True:
+#    ret, frame = vc.read()
+#    faces = detect.detectFace(frame)
+#    for (x,y,w,h) in faces:
+#        faceimg = frame[y:y+h, x:x+w]
+#        scores = blank.recognize_from_encodings(faceimg)
+##        print(scores)
+#        name = max(scores, key = scores.get)
+#        print(name)
+#        cv2.rectangle(frame, (x, y), (x+w, y+h), (255,0,0), 1)
+#    
+#    cv2.imshow("Frame", frame)
+#    
+#    if cv2.waitKey(1) & 0xFF == ord('q'):
+#        break
+#vc.release()
+#cv2.destroyAllWindows()
+
+
+
     
     
