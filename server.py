@@ -62,7 +62,7 @@ while True:
         server_init.send_reply(b'stop')
         break
     """Send reply to server to keep sending."""
-    server_init.send_reply(b'OK')
+    server_init.send_reply(b'K')
     cv2.imshow(msg, frame)
     
 cv2.destroyAllWindows()        
