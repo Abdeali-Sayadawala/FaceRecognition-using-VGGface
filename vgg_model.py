@@ -178,11 +178,11 @@ class VggFaceNet(object):
         if os.path.exists("encodings.pk"):
             file = open("encodings.pk", "rb")
             encodings_from_files = pickle.load(file)
-            entry = []
             if len(os.listdir(data)) != 0:
                 for person in os.listdir(data):
                     count = 1
                     if len(os.listdir(os.path.join(data, person))) != 0:
+                        entry = []
                         for img in os.listdir(os.path.join(data, person)):
                             print("Image "+str(count)+"/"+str(len(os.listdir(os.path.join(data, person))))+" -- "+str(person))
                             image_to_encode = cv2.imread(str(data)+"/"+str(person)+"/"+str(img))
@@ -194,12 +194,12 @@ class VggFaceNet(object):
                 print("No data found in folder..")
             file.close()
         else:
-            entry = []
             encodings = {}
             if len(os.listdir(data)) != 0:
                 for person in os.listdir(data):
                     count = 1
                     if len(os.listdir(os.path.join(data, person))) != 0:
+                        entry = []
                         for img in os.listdir(os.path.join(data, person)):
                             print("Image "+str(count)+"/"+str(len(os.listdir(os.path.join(data, person))))+" -- "+str(person))
                             image_to_encode = cv2.imread(str(data)+"/"+str(person)+"/"+str(img))
@@ -214,7 +214,7 @@ class VggFaceNet(object):
             file.close()
         file = open("encodings.pk", "rb")
         self.encodings_from_file = pickle.load(file)
-        file.close
+        file.close()
         self.scores = {}
         for x in self.encodings_from_file:
             self.scores[x] = 0
