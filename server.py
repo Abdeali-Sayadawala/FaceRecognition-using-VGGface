@@ -17,24 +17,33 @@ import datetime
 print(datetime.datetime.now().strftime("%H"),":",datetime.datetime.now().strftime("%M"),":",datetime.datetime.now().strftime("%S"))
 
 """initializing the server using imagezmq"""
-server_init = imagezmq.ImageHub(open_port='tcp://*:8008')
-hostname = socket.gethostname()
-ipaddress = socket.gethostbyname(hostname)
+#server_init = imagezmq.ImageHub(open_port='tcp://*:8008')
+#hostname = socket.gethostname()
+#ipaddress = socket.gethostbyname(hostname)
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["Ajna"]
 coll = db["Person"]
 """Below code will show the ipaddress of the server it is using
 Use this ip address in the client code to connect to this server"""
-print("Ip address of server: "+str(ipaddress))
+#print("Ip address of server: "+str(ipaddress))
 
 blank = vgg_model.VggFaceNet()
 detect = vgg_model.Detection()
 
+#cam1 = cv2.VideoCapture("http://192.168.0.6:8081")
+#cam2 = cv2.VideoCapture("http://192.168.0.6:8082")
+vc = cv2.VideoCapture(0)
+frame_count = 0
+
 """infinite loop to recieve image from client and show it on screen
     This loop can be broken by pressing the 'q' button"""
 while True:
+    frame_count = frame_count + 1
     """We recieve image and message from the client connected"""
-    (msg, frame) = server_init.recv_image()
+#    (msg, frame) = server_init.recv_image()
+#    ret1, frame1 = cam1.read()
+#    ret2, frame2 = cam2.read()
+    ret, frame = vc.read()
 
     """Time setting for entry of time stamp in database"""    
     date = datetime.datetime.now().strftime("%d")
@@ -45,27 +54,51 @@ while True:
     sec = datetime.datetime.now().strftime("%S") 
     time = str(date)+"/"+str(month)+"/"+str(year)+"--"+str(hr)+":"+str(mi)+":"+str(sec)
     
-    faces = detect.detectFace(frame)
+    if frame_count%20 == 0:
+        print("recognize==========================================================")
+        faces = detect.detectFace(frame)
+#        faces1 = detect.detectFace(frame1)
+#        faces2 = detect.detectFace(frame2)
     
-    for (x, y, w, h) in faces:
-        faceimg = frame[y:y+h, x:x+w]
-        scores = blank.recognize_from_encodings(faceimg)
-        print(scores)
-        name = max(scores, key = scores.get)
-        coll = db[name]
-        coll.insert_one({"Camera":msg, "Time": time})
-        print(name)
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (255,0,0), 1)
-    
+        for (x, y, w, h) in faces:
+            faceimg = frame[y:y+h, x:x+w]
+            scores = blank.recognize_from_encodings(faceimg)
+            print("camera1==============================================================")
+            print(scores)
+            name = max(scores, key = scores.get)
+            coll = db[name]
+            coll.insert_one({"Camera":"1", "Time": time})
+            print(name)
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (255,0,0), 1)
+        cv2.imshow("frame1", frame)
+            
+#        for (x, y, w, h) in faces2:
+#            faceimg = frame2[y:y+h, x:x+w]
+#            scores = blank.recognize_from_encodings(faceimg)
+#            print("camera2==============================================================")
+#            print(scores)
+#            name = max(scores, key = scores.get)
+#            coll = db[name]
+#            coll.insert_one({"Camera":"2", "Time": time})
+#            print(name)
+#            cv2.rectangle(frame2, (x, y), (x+w, y+h), (0, 255, 0), 1)
+#            cv2.imshow("frame2", frame2)
+#        cv2.imshow("frame2", frame2)
+    else:
+        cv2.imshow("frame1", frame)
+#        cv2.imshow("frame2", frame2)
     """When we stop here we send a reply stop to the client to stop it."""
     if cv2.waitKey(1) & 0xFF == ord("q"):
-        server_init.send_reply(b'stop')
+#        server_init.send_reply(b'stop')
         break
     """Send reply to server to keep sending."""
-    server_init.send_reply(b'K')
-    cv2.imshow(msg, frame)
+#    server_init.send_reply(b'K')
+#    cv2.imshow(msg, frame)
     
 cv2.destroyAllWindows()        
+vc.release()
+#cam1.release()
+#cam2.release()
     
 """This is test/debugging code """
 #import vgg_model
